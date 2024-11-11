@@ -2,6 +2,7 @@ import AbstractSpruceTest, {
     test,
     assert,
     errorAssert,
+    generateId,
 } from '@sprucelabs/test-utils'
 import SpruceAutoupgrader, {
     Autoupgrader,
@@ -28,6 +29,24 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
             parameters: ['packagePaths'],
         })
+    }
+
+    @test()
+    protected static async callsChdirForEachPackagePath() {
+        let passedPaths: string[] = []
+
+        SpruceAutoupgrader.chdir = (path: string) => {
+            passedPaths.push(path)
+        }
+
+        const packagePaths = [generateId(), generateId()]
+        await this.instance.run(packagePaths)
+
+        assert.isEqualDeep(
+            passedPaths,
+            packagePaths,
+            'Should call chdir(path) for each package!\n'
+        )
     }
 
     private static SpruceAutoupgrader() {
