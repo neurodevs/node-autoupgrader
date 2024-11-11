@@ -32,6 +32,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.changeDirectoryToCurrentPackage()
         this.tryToRunSpruceUpgrade()
         this.tryToRunTsc()
+        this.runGit()
     }
 
     private changeDirectoryToCurrentPackage() {
@@ -47,7 +48,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     }
 
     private runSpruceUpgrade() {
-        this.execSync('spruce upgrade', { stdio: 'inherit' })
+        this.execCommand('spruce upgrade')
     }
 
     private throwSpruceUpgradeFailed() {
@@ -66,7 +67,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     }
 
     private runTsc() {
-        this.execSync('tsc --noEmit', { stdio: 'inherit' })
+        this.execCommand('tsc --noEmit')
     }
 
     private throwTscFailed() {
@@ -74,6 +75,16 @@ export default class SpruceAutoupgrader implements Autoupgrader {
             code: 'TSC_FAILED',
             packagePath: this.currentPackagePath,
         })
+    }
+
+    private runGit() {
+        this.execCommand('git add .')
+        this.execCommand('git commit -m "patch: autoupgrade"')
+        this.execCommand('git push')
+    }
+
+    private execCommand(command: string) {
+        this.execSync(command, { stdio: 'inherit' })
     }
 
     private get chdir() {

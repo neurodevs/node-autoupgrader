@@ -52,12 +52,12 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         await this.run()
 
         const expected = [
-            { command: 'spruce upgrade', options: { stdio: 'inherit' } },
-            { command: 'spruce upgrade', options: { stdio: 'inherit' } },
+            this.createSpruceUpgradeCall(),
+            this.createSpruceUpgradeCall(),
         ] as CallToExecSync[]
 
         assert.isEqualDeep(
-            [this.callsToExecSync[0], this.callsToExecSync[2]],
+            [this.callsToExecSync[0], this.callsToExecSync[5]],
             expected,
             'Should call execSync() for each package with the following options!\n'
         )
@@ -79,12 +79,12 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         await this.run()
 
         const expected = [
-            { command: 'tsc --noEmit', options: { stdio: 'inherit' } },
-            { command: 'tsc --noEmit', options: { stdio: 'inherit' } },
+            this.createTscCall(),
+            this.createTscCall(),
         ] as CallToExecSync[]
 
         assert.isEqualDeep(
-            [this.callsToExecSync[1], this.callsToExecSync[3]],
+            [this.callsToExecSync[1], this.callsToExecSync[6]],
             expected,
             'Should call execSync() for each package with the following options!\n'
         )
@@ -102,9 +102,25 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         })
     }
 
-    private static skipTryToRunSpruceUpgrade() {
-        // @ts-ignore
-        this.instance.tryToRunSpruceUpgrade = () => {}
+    @test()
+    protected static async callsGitAddCommitAndPush() {
+        await this.run()
+
+        const expected = [
+            this.formatCommand('git add .'),
+            this.formatCommand('git commit -m "patch: autoupgrade"'),
+            this.formatCommand('git push'),
+        ] as CallToExecSync[]
+
+        assert.isEqualDeep(
+            [
+                this.callsToExecSync[2],
+                this.callsToExecSync[3],
+                this.callsToExecSync[4],
+            ],
+            expected,
+            'Should call execSync() for each package with the following options!\n'
+        )
     }
 
     private static fakeChdir() {
@@ -133,8 +149,28 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         }
     }
 
+    private static skipTryToRunSpruceUpgrade() {
+        // @ts-ignore
+        this.instance.tryToRunSpruceUpgrade = () => {}
+    }
+
     private static async run() {
         await this.instance.run(this.packagePaths)
+    }
+
+    private static createSpruceUpgradeCall() {
+        return this.formatCommand('spruce upgrade')
+    }
+
+    private static createTscCall() {
+        return this.formatCommand('tsc --noEmit')
+    }
+
+    private static formatCommand(command: string) {
+        return {
+            command,
+            options: { stdio: 'inherit' },
+        } as CallToExecSync
     }
 
     private static readonly packagePaths = [generateId(), generateId()]
