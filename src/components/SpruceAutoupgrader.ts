@@ -18,10 +18,13 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         assertOptions({ packagePaths }, ['packagePaths'])
 
         for (const path of packagePaths) {
-            this.chdir(path)
-
-            this.execSync('spruce upgrade', { stdio: 'inherit' })
+            this.upgradePackage(path)
         }
+    }
+
+    private upgradePackage(path: string) {
+        this.chdir(path)
+        this.execSync('spruce upgrade', { stdio: 'inherit' })
     }
 
     private get chdir() {
