@@ -5,6 +5,35 @@ import * as SpruceSchema from '@sprucelabs/schema'
 
 
 
+
+export declare namespace SpruceErrors.NodeAutoupgrader {
+
+	
+	export interface TscFailed {
+		
+			
+			'packagePath': string
+	}
+
+	export interface TscFailedSchema extends SpruceSchema.Schema {
+		id: 'tscFailed',
+		namespace: 'NodeAutoupgrader',
+		name: 'TSC_FAILED',
+		    fields: {
+		            /** . */
+		            'packagePath': {
+		                type: 'text',
+		                isRequired: true,
+		                options: undefined
+		            },
+		    }
+	}
+
+	export type TscFailedEntity = SchemaEntity<SpruceErrors.NodeAutoupgrader.TscFailedSchema>
+
+}
+
+
 export declare namespace SpruceErrors.NodeAutoupgrader {
 
 	

@@ -90,6 +90,23 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async throwsIfTscFails() {
+        this.setThrowOnExecSync()
+        this.skipTryToRunSpruceUpgrade()
+
+        const err = await assert.doesThrowAsync(() => this.run())
+
+        errorAssert.assertError(err, 'TSC_FAILED', {
+            packagePath: this.packagePaths[0],
+        })
+    }
+
+    private static skipTryToRunSpruceUpgrade() {
+        // @ts-ignore
+        this.instance.tryToRunSpruceUpgrade = () => {}
+    }
+
     private static fakeChdir() {
         this.callsToChdir = []
 

@@ -31,14 +31,14 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     private upgradePackage() {
         this.changeDirectoryToCurrentPackage()
         this.tryToRunSpruceUpgrade()
-        this.execSync('tsc --noEmit', { stdio: 'inherit' })
+        this.tryToRunTsc()
     }
 
     private changeDirectoryToCurrentPackage() {
         this.chdir(this.currentPackagePath)
     }
 
-    private tryToRunSpruceUpgrade() {
+    protected tryToRunSpruceUpgrade() {
         try {
             this.runSpruceUpgrade()
         } catch {
@@ -53,6 +53,25 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     private throwSpruceUpgradeFailed() {
         throw new SpruceError({
             code: 'SPRUCE_UPGRADE_FAILED',
+            packagePath: this.currentPackagePath,
+        })
+    }
+
+    private tryToRunTsc() {
+        try {
+            this.runTsc()
+        } catch {
+            this.throwTscFailed()
+        }
+    }
+
+    private runTsc() {
+        this.execSync('tsc --noEmit', { stdio: 'inherit' })
+    }
+
+    private throwTscFailed() {
+        throw new SpruceError({
+            code: 'TSC_FAILED',
             packagePath: this.currentPackagePath,
         })
     }

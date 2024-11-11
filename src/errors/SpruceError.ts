@@ -10,6 +10,11 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
             case 'SPRUCE_UPGRADE_FAILED':
                 message = `Command "spruce upgrade" failed for package: ${options?.packagePath}!`
                 break
+
+            case 'TSC_FAILED':
+                message = `Command "tsc --noEmit" failed for package: ${options?.packagePath}!`
+                break
+
             default:
                 message = super.friendlyMessage()
         }
