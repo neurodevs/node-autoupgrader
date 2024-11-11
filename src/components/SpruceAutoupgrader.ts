@@ -1,6 +1,7 @@
 import { execSync } from 'child_process'
 import { chdir } from 'process'
 import { assertOptions } from '@sprucelabs/schema'
+import SpruceError from '../errors/SpruceError'
 
 export default class SpruceAutoupgrader implements Autoupgrader {
     public static Class?: AutoupgraderConstructor
@@ -28,8 +29,31 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     }
 
     private upgradePackage() {
+        this.changeDirectoryToCurrentPackage()
+        this.tryToRunSpruceUpgrade()
+    }
+
+    private changeDirectoryToCurrentPackage() {
         this.chdir(this.currentPackagePath)
+    }
+
+    private tryToRunSpruceUpgrade() {
+        try {
+            this.runSpruceUpgrade()
+        } catch {
+            this.throwSpruceUpgradeFailed()
+        }
+    }
+
+    private runSpruceUpgrade() {
         this.execSync('spruce upgrade', { stdio: 'inherit' })
+    }
+
+    private throwSpruceUpgradeFailed() {
+        throw new SpruceError({
+            code: 'SPRUCE_UPGRADE_FAILED',
+            packagePath: this.currentPackagePath,
+        })
     }
 
     private get chdir() {

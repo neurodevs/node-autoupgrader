@@ -63,6 +63,16 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async throwsIfSpruceUpgradeFails() {
+        this.setThrowOnExecSync()
+
+        const err = await assert.doesThrowAsync(() => this.run())
+
+        errorAssert.assertError(err, 'SPRUCE_UPGRADE_FAILED', {
+            packagePath: this.packagePaths[0],
+        })
+    }
     private static fakeChdir() {
         this.callsToChdir = []
 
@@ -80,6 +90,12 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
             options?: ExecSyncOptions
         ) => {
             this.callsToExecSync.push({ command, options })
+        }
+    }
+
+    private static setThrowOnExecSync() {
+        SpruceAutoupgrader.execSync = () => {
+            throw new Error('Unexpected error in execSync')
         }
     }
 
