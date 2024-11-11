@@ -1,4 +1,8 @@
-import AbstractSpruceTest, { test, assert } from '@sprucelabs/test-utils'
+import AbstractSpruceTest, {
+    test,
+    assert,
+    errorAssert,
+} from '@sprucelabs/test-utils'
 import SpruceAutoupgrader, {
     Autoupgrader,
 } from '../components/SpruceAutoupgrader'
@@ -14,6 +18,16 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     @test()
     protected static async canCreateSpruceAutoupgrader() {
         assert.isTruthy(this.instance)
+    }
+
+    @test()
+    protected static async runThrowsWithMissingRequiredOptions() {
+        // @ts-ignore
+        const err = await assert.doesThrowAsync(() => this.instance.run())
+
+        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
+            parameters: ['packagePaths'],
+        })
     }
 
     private static SpruceAutoupgrader() {
