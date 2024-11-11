@@ -31,6 +31,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     private upgradePackage() {
         this.changeDirectoryToCurrentPackage()
         this.tryToRunSpruceUpgrade()
+        this.execSync('tsc --noEmit', { stdio: 'inherit' })
     }
 
     private changeDirectoryToCurrentPackage() {

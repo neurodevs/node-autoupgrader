@@ -57,7 +57,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         ] as CallToExecSync[]
 
         assert.isEqualDeep(
-            this.callsToExecSync,
+            [this.callsToExecSync[0], this.callsToExecSync[2]],
             expected,
             'Should call execSync() for each package with the following options!\n'
         )
@@ -73,6 +73,23 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
             packagePath: this.packagePaths[0],
         })
     }
+
+    @test()
+    protected static async callsTscForEachPackagePath() {
+        await this.run()
+
+        const expected = [
+            { command: 'tsc --noEmit', options: { stdio: 'inherit' } },
+            { command: 'tsc --noEmit', options: { stdio: 'inherit' } },
+        ] as CallToExecSync[]
+
+        assert.isEqualDeep(
+            [this.callsToExecSync[1], this.callsToExecSync[3]],
+            expected,
+            'Should call execSync() for each package with the following options!\n'
+        )
+    }
+
     private static fakeChdir() {
         this.callsToChdir = []
 
