@@ -1,3 +1,4 @@
+import { ExecSyncOptions } from 'child_process'
 import AbstractSpruceTest, {
     test,
     assert,
@@ -13,6 +14,10 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
 
     protected static async beforeEach() {
         await super.beforeEach()
+
+        this.fakeChdir()
+        this.fakeExecSync()
+
         this.instance = this.SpruceAutoupgrader()
     }
 
@@ -33,23 +38,67 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
 
     @test()
     protected static async callsChdirForEachPackagePath() {
-        let passedPaths: string[] = []
-
-        SpruceAutoupgrader.chdir = (path: string) => {
-            passedPaths.push(path)
-        }
-
-        const packagePaths = [generateId(), generateId()]
-        await this.instance.run(packagePaths)
+        await this.run()
 
         assert.isEqualDeep(
-            passedPaths,
-            packagePaths,
+            this.callsToChdir,
+            this.packagePaths,
             'Should call chdir(path) for each package!\n'
         )
     }
 
+    @test()
+    protected static async callsSpruceUpgradeForEachPackagePath() {
+        await this.run()
+
+        const expected = [
+            { command: 'spruce upgrade', options: { stdio: 'inherit' } },
+            { command: 'spruce upgrade', options: { stdio: 'inherit' } },
+        ] as CallToExecSync[]
+
+        assert.isEqualDeep(
+            this.callsToExecSync,
+            expected,
+            'Should call execSync() for each package with the following options!\n'
+        )
+    }
+
+    private static fakeChdir() {
+        this.callsToChdir = []
+
+        SpruceAutoupgrader.chdir = (path: string) => {
+            this.callsToChdir.push(path)
+        }
+    }
+
+    private static fakeExecSync() {
+        this.callsToExecSync = []
+
+        // @ts-ignore
+        SpruceAutoupgrader.execSync = (
+            command: string,
+            options?: ExecSyncOptions
+        ) => {
+            this.callsToExecSync.push({ command, options })
+        }
+    }
+
+    private static async run() {
+        await this.instance.run(this.packagePaths)
+    }
+
+    private static readonly packagePaths = [generateId(), generateId()]
+
+    private static callsToChdir: string[] = []
+
+    private static callsToExecSync: CallToExecSync[] = []
+
     private static SpruceAutoupgrader() {
         return SpruceAutoupgrader.Create()
     }
+}
+
+export interface CallToExecSync {
+    command: string
+    options?: ExecSyncOptions
 }

@@ -1,9 +1,12 @@
+import { execSync } from 'child_process'
 import { chdir } from 'process'
 import { assertOptions } from '@sprucelabs/schema'
 
 export default class SpruceAutoupgrader implements Autoupgrader {
     public static Class?: AutoupgraderConstructor
+
     public static chdir = chdir
+    public static execSync = execSync
 
     protected constructor() {}
 
@@ -16,11 +19,17 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
         for (const path of packagePaths) {
             this.chdir(path)
+
+            this.execSync('spruce upgrade', { stdio: 'inherit' })
         }
     }
 
     private get chdir() {
         return SpruceAutoupgrader.chdir
+    }
+
+    private get execSync() {
+        return SpruceAutoupgrader.execSync
     }
 }
 
