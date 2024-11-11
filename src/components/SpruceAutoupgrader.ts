@@ -8,6 +8,9 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     public static chdir = chdir
     public static execSync = execSync
 
+    private packagePaths!: string[]
+    private currentPackagePath!: string
+
     protected constructor() {}
 
     public static Create() {
@@ -16,14 +19,16 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     public async run(packagePaths: string[]) {
         assertOptions({ packagePaths }, ['packagePaths'])
+        this.packagePaths = packagePaths
 
-        for (const path of packagePaths) {
-            this.upgradePackage(path)
+        for (const path of this.packagePaths) {
+            this.currentPackagePath = path
+            this.upgradePackage()
         }
     }
 
-    private upgradePackage(path: string) {
-        this.chdir(path)
+    private upgradePackage() {
+        this.chdir(this.currentPackagePath)
         this.execSync('spruce upgrade', { stdio: 'inherit' })
     }
 
