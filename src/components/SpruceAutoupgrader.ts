@@ -9,9 +9,9 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     public static chdir = chdir
     public static execSync = execSync
 
+    protected currentGitChanges = ''
     private packagePaths!: string[]
     private currentPackagePath!: string
-    protected currentGitChanges = ''
     private currentError!: Error
 
     protected constructor() {}
