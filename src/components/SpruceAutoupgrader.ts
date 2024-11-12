@@ -28,7 +28,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.upgradePackages()
     }
 
-    private assertNoUncommittedChanges() {
+    protected assertNoUncommittedChanges() {
         const uncommittedPaths = this.packagePaths.filter((path) => {
             this.currentPackagePath = path
             this.checkForGitChanges()
