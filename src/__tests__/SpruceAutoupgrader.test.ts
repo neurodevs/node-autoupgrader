@@ -5,9 +5,8 @@ import AbstractSpruceTest, {
     errorAssert,
     generateId,
 } from '@sprucelabs/test-utils'
-import SpruceAutoupgrader, {
-    Autoupgrader,
-} from '../components/SpruceAutoupgrader'
+import SpruceAutoupgrader from '../components/SpruceAutoupgrader'
+import { Autoupgrader } from '../types'
 
 export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     private static instance: Autoupgrader

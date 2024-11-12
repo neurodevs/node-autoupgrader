@@ -3,6 +3,7 @@ import { chdir } from 'process'
 import { assertOptions } from '@sprucelabs/schema'
 import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import SpruceError from '../errors/SpruceError'
+import { Autoupgrader, AutoupgraderConstructor } from '../types'
 
 export default class SpruceAutoupgrader implements Autoupgrader {
     public static Class?: AutoupgraderConstructor
@@ -197,9 +198,3 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         return SpruceAutoupgrader.execSync
     }
 }
-
-export interface Autoupgrader {
-    run(packagePaths: string[]): Promise<void>
-}
-
-export type AutoupgraderConstructor = new () => Autoupgrader
