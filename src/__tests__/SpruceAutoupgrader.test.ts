@@ -278,7 +278,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     }
 
     private static createNpmPublishCall() {
-        return this.formatCommand('npm publish')
+        return this.formatCommand('npm publish --access public')
     }
 
     private static formatCommand(command: string) {

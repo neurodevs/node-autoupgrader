@@ -122,7 +122,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     }
 
     private runNpmPublish() {
-        this.execCommand('npm publish')
+        this.execCommand('npm publish --access public')
     }
 
     private throwNpmPublishFailed() {
