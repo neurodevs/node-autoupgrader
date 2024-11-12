@@ -1,13 +1,31 @@
+import { homedir } from 'os'
 import { Autoupgrader, AutoupgraderConstructor } from '../types'
+import SpruceAutoupgrader from './SpruceAutoupgrader'
 
 export default class NeurodevsAutoupgrader implements Autoupgrader {
     public static Class?: AutoupgraderConstructor
 
-    protected constructor() {}
+    private spruce: Autoupgrader
 
-    public static Create() {
-        return new (this.Class ?? this)()
+    protected constructor(spruce: Autoupgrader) {
+        this.spruce = spruce
     }
 
-    public async run(_packagePaths: string[]) {}
+    public static Create() {
+        const spruce = SpruceAutoupgrader.Create()
+        return new (this.Class ?? this)(spruce)
+    }
+
+    public async run() {
+        await this.spruce.run(this.packagePaths)
+    }
+
+    private packagePaths = [
+        this.createPath('node-lsl'),
+        this.createPath('node-xdf'),
+    ]
+
+    private createPath(packageName: string) {
+        return `${homedir()}/dev/${packageName}`
+    }
 }
