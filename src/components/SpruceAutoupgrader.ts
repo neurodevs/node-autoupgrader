@@ -31,9 +31,9 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     private upgradePackage() {
         this.changeDirectoryToCurrentPackage()
+        this.tryToRunNpmVersionPatch()
         this.tryToRunSpruceUpgrade()
         this.tryToRunTypeValidation()
-        this.tryToRunNpmVersionPatch()
         this.tryToRunGitPublish()
         this.tryToRunNpmPublish()
     }
