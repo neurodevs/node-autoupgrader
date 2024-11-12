@@ -1,6 +1,7 @@
 import { execSync } from 'child_process'
 import { chdir } from 'process'
 import { assertOptions } from '@sprucelabs/schema'
+import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import SpruceError from '../errors/SpruceError'
 
 export default class SpruceAutoupgrader implements Autoupgrader {
@@ -14,6 +15,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     private uncommittedPaths!: string[]
     private currentPackagePath!: string
     private currentError!: Error
+    private log = buildLog('SpruceAutoupgrader')
 
     protected constructor() {}
 
@@ -65,6 +67,8 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     }
 
     private upgradePackage() {
+        this.log.info('Upgrading package:', this.currentPackagePath)
+
         this.changeDirectoryToCurrentPackage()
         this.trySpruceUpgrade()
         this.checkForGitChanges()
