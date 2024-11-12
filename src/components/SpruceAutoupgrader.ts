@@ -182,7 +182,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     }
 
     private execCommand(command: string) {
-        this.execSync(command, { stdio: 'inherit' })
+        this.execSync(command, {})
     }
 
     private get hasGitChanges() {

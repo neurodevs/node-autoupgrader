@@ -362,7 +362,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     private static formatCommand(command: string) {
         return {
             command,
-            options: { stdio: 'inherit' },
+            options: {},
         } as CallToExecSync
     }
 
@@ -371,15 +371,11 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     }
 
     private static readonly packagePaths = [generateId(), generateId()]
-
     private static readonly fakeExecSyncError = 'Unexpected error in execSync'
-
     private static readonly fakeGitStatus = 'M fake.ts' as Buffer & string
 
     private static fakeGitStatusResponse = '' as Buffer & string
-
     private static callsToChdir: string[] = []
-
     private static callsToExecSync: CallToExecSync[] = []
 
     private static SpruceAutoupgrader() {
