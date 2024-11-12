@@ -11,6 +11,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     protected currentGitChanges = ''
     private packagePaths!: string[]
+    private uncommittedPaths!: string[]
     private currentPackagePath!: string
     private currentError!: Error
 
@@ -29,16 +30,23 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     }
 
     protected assertNoUncommittedChanges() {
-        const uncommittedPaths = this.packagePaths.filter((path) => {
+        this.searchForUncommitted()
+        this.throwIfUncommitted()
+    }
+
+    private searchForUncommitted() {
+        this.uncommittedPaths = this.packagePaths.filter((path) => {
             this.currentPackagePath = path
             this.checkForGitChanges()
             return this.hasGitChanges
         })
+    }
 
-        if (uncommittedPaths.length) {
+    private throwIfUncommitted() {
+        if (this.uncommittedPaths.length > 0) {
             throw new SpruceError({
                 code: 'UNCOMMITTED_CHANGES',
-                packagePaths: uncommittedPaths,
+                packagePaths: this.uncommittedPaths,
             })
         }
     }
