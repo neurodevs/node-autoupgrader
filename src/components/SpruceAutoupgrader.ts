@@ -39,6 +39,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     private searchForUncommitted() {
         this.uncommittedPaths = this.packagePaths.filter((path) => {
             this.currentPackagePath = path
+            this.changeDirectoryToCurrentPackage()
             this.checkForGitChanges()
             return this.hasGitChanges
         })

@@ -46,6 +46,8 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         errorAssert.assertError(err, 'UNCOMMITTED_CHANGES', {
             packagePaths: this.packagePaths,
         })
+
+        assert.isEqualDeep(this.callsToChdir, this.packagePaths)
     }
 
     @test()
