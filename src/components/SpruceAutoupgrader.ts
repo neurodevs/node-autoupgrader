@@ -70,10 +70,10 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.checkForGitChanges()
 
         if (this.hasGitChanges) {
-            this.tryToRunTypeValidation()
-            this.tryToRunNpmVersionPatch()
-            this.tryToRunGitPublish()
-            this.tryToRunNpmPublish()
+            this.tryTypeValidation()
+            this.tryNpmVersionPatch()
+            this.tryGitPublish()
+            this.tryNpmPublish()
         }
     }
 
@@ -98,7 +98,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('SPRUCE_UPGRADE_FAILED')
     }
 
-    protected tryToRunTypeValidation() {
+    protected tryTypeValidation() {
         try {
             this.runTypeValidation()
         } catch (err: any) {
@@ -115,7 +115,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('TYPE_VALIDATION_FAILED')
     }
 
-    protected tryToRunNpmVersionPatch() {
+    protected tryNpmVersionPatch() {
         try {
             this.runNpmVersionPatch()
         } catch (err: any) {
@@ -132,7 +132,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('NPM_VERSION_PATCH_FAILED')
     }
 
-    protected tryToRunGitPublish() {
+    protected tryGitPublish() {
         try {
             this.runGitPublish()
         } catch (err: any) {
@@ -151,7 +151,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('GIT_PUBLISH_FAILED')
     }
 
-    private tryToRunNpmPublish() {
+    private tryNpmPublish() {
         try {
             this.runNpmPublish()
         } catch (err: any) {
