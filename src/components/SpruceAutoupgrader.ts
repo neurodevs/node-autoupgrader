@@ -11,6 +11,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     private packagePaths!: string[]
     private currentPackagePath!: string
+    private currentError!: Error
 
     protected constructor() {}
 
@@ -32,7 +33,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.changeDirectoryToCurrentPackage()
         this.tryToRunSpruceUpgrade()
         this.tryToRunTsc()
-        this.runGit()
+        this.tryToRunGitPublish()
     }
 
     private changeDirectoryToCurrentPackage() {
@@ -42,7 +43,8 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     protected tryToRunSpruceUpgrade() {
         try {
             this.runSpruceUpgrade()
-        } catch {
+        } catch (err: any) {
+            this.currentError = err.message
             this.throwSpruceUpgradeFailed()
         }
     }
@@ -52,16 +54,14 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     }
 
     private throwSpruceUpgradeFailed() {
-        throw new SpruceError({
-            code: 'SPRUCE_UPGRADE_FAILED',
-            packagePath: this.currentPackagePath,
-        })
+        this.throwSpruceError('SPRUCE_UPGRADE_FAILED')
     }
 
     private tryToRunTsc() {
         try {
             this.runTsc()
-        } catch {
+        } catch (err: any) {
+            this.currentError = err.message
             this.throwTscFailed()
         }
     }
@@ -71,16 +71,34 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     }
 
     private throwTscFailed() {
-        throw new SpruceError({
-            code: 'TSC_FAILED',
-            packagePath: this.currentPackagePath,
-        })
+        this.throwSpruceError('TSC_FAILED')
     }
 
-    private runGit() {
+    private tryToRunGitPublish() {
+        try {
+            this.runGitPublish()
+        } catch (err: any) {
+            this.currentError = err.message
+            this.throwGitPublishFailed()
+        }
+    }
+
+    private runGitPublish() {
         this.execCommand('git add .')
         this.execCommand('git commit -m "patch: autoupgrade"')
         this.execCommand('git push')
+    }
+
+    private throwGitPublishFailed() {
+        this.throwSpruceError('GIT_PUBLISH_FAILED')
+    }
+
+    private throwSpruceError(code: SpruceError['options']['code']) {
+        throw new SpruceError({
+            code,
+            packagePath: this.currentPackagePath,
+            originalError: this.currentError,
+        })
     }
 
     private execCommand(command: string) {

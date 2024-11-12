@@ -7,7 +7,10 @@ export interface TscFailedErrorOptions extends SpruceErrors.NodeAutoupgrader.Tsc
 export interface SpruceUpgradeFailedErrorOptions extends SpruceErrors.NodeAutoupgrader.SpruceUpgradeFailed, ISpruceErrorOptions {
 	code: 'SPRUCE_UPGRADE_FAILED'
 }
+export interface GitPublishFailedErrorOptions extends SpruceErrors.NodeAutoupgrader.GitPublishFailed, ISpruceErrorOptions {
+	code: 'GIT_PUBLISH_FAILED'
+}
 
-type ErrorOptions =  | TscFailedErrorOptions  | SpruceUpgradeFailedErrorOptions 
+type ErrorOptions =  | TscFailedErrorOptions  | SpruceUpgradeFailedErrorOptions  | GitPublishFailedErrorOptions 
 
 export default ErrorOptions

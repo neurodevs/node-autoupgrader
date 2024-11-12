@@ -6,6 +6,7 @@ import * as SpruceSchema from '@sprucelabs/schema'
 
 
 
+
 export declare namespace SpruceErrors.NodeAutoupgrader {
 
 	
@@ -58,6 +59,34 @@ export declare namespace SpruceErrors.NodeAutoupgrader {
 	}
 
 	export type SpruceUpgradeFailedEntity = SchemaEntity<SpruceErrors.NodeAutoupgrader.SpruceUpgradeFailedSchema>
+
+}
+
+
+export declare namespace SpruceErrors.NodeAutoupgrader {
+
+	
+	export interface GitPublishFailed {
+		
+			
+			'packagePath': string
+	}
+
+	export interface GitPublishFailedSchema extends SpruceSchema.Schema {
+		id: 'gitPublishFailed',
+		namespace: 'NodeAutoupgrader',
+		name: 'GIT_PUBLISH_FAILED',
+		    fields: {
+		            /** . */
+		            'packagePath': {
+		                type: 'text',
+		                isRequired: true,
+		                options: undefined
+		            },
+		    }
+	}
+
+	export type GitPublishFailedEntity = SchemaEntity<SpruceErrors.NodeAutoupgrader.GitPublishFailedSchema>
 
 }
 

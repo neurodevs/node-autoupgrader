@@ -71,6 +71,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
 
         errorAssert.assertError(err, 'SPRUCE_UPGRADE_FAILED', {
             packagePath: this.packagePaths[0],
+            originalError: this.fakeExecSyncError,
         })
     }
 
@@ -99,11 +100,12 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
 
         errorAssert.assertError(err, 'TSC_FAILED', {
             packagePath: this.packagePaths[0],
+            originalError: this.fakeExecSyncError,
         })
     }
 
     @test()
-    protected static async callsGitAddCommitAndPush() {
+    protected static async callsGitPublishForEachPackage() {
         await this.run()
 
         const expected = [
@@ -121,6 +123,24 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
             expected,
             'Should call execSync() for each package with the following options!\n'
         )
+    }
+
+    @test()
+    protected static async throwsIfGitPublishFails() {
+        this.setThrowOnExecSync()
+        this.skipTryToRunSpruceUpgrade()
+        this.skipTryToRunTsc()
+
+        const err = await assert.doesThrowAsync(() => this.run())
+
+        errorAssert.assertError(err, 'GIT_PUBLISH_FAILED', {
+            packagePath: this.packagePaths[0],
+            originalError: this.fakeExecSyncError,
+        })
+    }
+
+    private static async run() {
+        await this.instance.run(this.packagePaths)
     }
 
     private static fakeChdir() {
@@ -145,7 +165,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
 
     private static setThrowOnExecSync() {
         SpruceAutoupgrader.execSync = () => {
-            throw new Error('Unexpected error in execSync')
+            throw new Error(this.fakeExecSyncError)
         }
     }
 
@@ -154,8 +174,9 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         this.instance.tryToRunSpruceUpgrade = () => {}
     }
 
-    private static async run() {
-        await this.instance.run(this.packagePaths)
+    private static skipTryToRunTsc() {
+        // @ts-ignore
+        this.instance.tryToRunTsc = () => {}
     }
 
     private static createSpruceUpgradeCall() {
@@ -172,6 +193,8 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
             options: { stdio: 'inherit' },
         } as CallToExecSync
     }
+
+    private static readonly fakeExecSyncError = 'Unexpected error in execSync'
 
     private static readonly packagePaths = [generateId(), generateId()]
 

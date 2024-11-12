@@ -15,6 +15,13 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
                 message = `Command "tsc --noEmit" failed for package: ${options?.packagePath}!`
                 break
 
+            case 'GIT_PUBLISH_FAILED':
+                message = `
+                    \n Git publish failed for package: ${options?.packagePath}!
+                    \n Original error: ${options?.originalError}
+                `
+                break
+
             default:
                 message = super.friendlyMessage()
         }
