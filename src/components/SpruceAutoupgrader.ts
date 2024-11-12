@@ -86,7 +86,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     }
 
     private runNpmVersionPatch() {
-        this.execCommand('npm version patch')
+        this.execCommand('npm version patch --no-git-tag-version')
     }
 
     private throwNpmVersionPatchFailed() {

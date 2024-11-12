@@ -52,8 +52,8 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         await this.run()
 
         const expected = [
-            this.formatCommand('npm version patch'),
-            this.formatCommand('npm version patch'),
+            this.createNpmVersionPatchCall(),
+            this.createNpmVersionPatchCall(),
         ] as CallToExecSync[]
 
         assert.isEqualDeep(
@@ -263,6 +263,10 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     private static skipTryToRunGitPublish() {
         // @ts-ignore
         this.instance.tryToRunGitPublish = () => {}
+    }
+
+    private static createNpmVersionPatchCall() {
+        return this.formatCommand('npm version patch --no-git-tag-version')
     }
 
     private static createSpruceUpgradeCall() {
