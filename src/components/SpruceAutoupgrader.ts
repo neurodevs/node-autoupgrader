@@ -34,6 +34,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.tryToRunSpruceUpgrade()
         this.tryToRunTsc()
         this.tryToRunGitPublish()
+        this.runNpmPublish()
     }
 
     private changeDirectoryToCurrentPackage() {
@@ -91,6 +92,10 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     private throwGitPublishFailed() {
         this.throwSpruceError('GIT_PUBLISH_FAILED')
+    }
+
+    private runNpmPublish() {
+        this.execCommand('npm publish')
     }
 
     private throwSpruceError(code: SpruceError['options']['code']) {
