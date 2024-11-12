@@ -20,7 +20,11 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
                 break
 
             case 'NPM_PUBLISH_FAILED':
-                message = `Npm publis!`
+                message = `Npm publish failed for package: ${options?.packagePath}!`
+                break
+
+            case 'NPM_VERSION_PATCH_FAILED':
+                message = `Npm version patch failed for package: ${options?.packagePath}!`
                 break
 
             default:

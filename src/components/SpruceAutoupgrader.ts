@@ -33,6 +33,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.changeDirectoryToCurrentPackage()
         this.tryToRunSpruceUpgrade()
         this.tryToRunTypeValidation()
+        this.tryToRunNpmVersionPatch()
         this.tryToRunGitPublish()
         this.tryToRunNpmPublish()
     }
@@ -73,6 +74,23 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     private throwTypeValidationFailed() {
         this.throwSpruceError('TYPE_VALIDATION_FAILED')
+    }
+
+    private tryToRunNpmVersionPatch() {
+        try {
+            this.runNpmVersionPatch()
+        } catch (err: any) {
+            this.currentError = err.message
+            this.throwNpmVersionPatchFailed()
+        }
+    }
+
+    private runNpmVersionPatch() {
+        this.execCommand('npm version patch')
+    }
+
+    private throwNpmVersionPatchFailed() {
+        this.throwSpruceError('NPM_VERSION_PATCH_FAILED')
     }
 
     private tryToRunGitPublish() {

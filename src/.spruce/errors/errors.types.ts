@@ -8,6 +8,7 @@ import * as SpruceSchema from '@sprucelabs/schema'
 
 
 
+
 export declare namespace SpruceErrors.NodeAutoupgrader {
 
 	
@@ -60,6 +61,34 @@ export declare namespace SpruceErrors.NodeAutoupgrader {
 	}
 
 	export type SpruceUpgradeFailedEntity = SchemaEntity<SpruceErrors.NodeAutoupgrader.SpruceUpgradeFailedSchema>
+
+}
+
+
+export declare namespace SpruceErrors.NodeAutoupgrader {
+
+	
+	export interface NpmVersionPatchFailed {
+		
+			
+			'packagePath': string
+	}
+
+	export interface NpmVersionPatchFailedSchema extends SpruceSchema.Schema {
+		id: 'npmVersionPatchFailed',
+		namespace: 'NodeAutoupgrader',
+		name: 'NPM_VERSION_PATCH_FAILED',
+		    fields: {
+		            /** . */
+		            'packagePath': {
+		                type: 'text',
+		                isRequired: true,
+		                options: undefined
+		            },
+		    }
+	}
+
+	export type NpmVersionPatchFailedEntity = SchemaEntity<SpruceErrors.NodeAutoupgrader.NpmVersionPatchFailedSchema>
 
 }
 

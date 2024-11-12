@@ -7,6 +7,9 @@ export interface TypeValidationFailedErrorOptions extends SpruceErrors.NodeAutou
 export interface SpruceUpgradeFailedErrorOptions extends SpruceErrors.NodeAutoupgrader.SpruceUpgradeFailed, ISpruceErrorOptions {
 	code: 'SPRUCE_UPGRADE_FAILED'
 }
+export interface NpmVersionPatchFailedErrorOptions extends SpruceErrors.NodeAutoupgrader.NpmVersionPatchFailed, ISpruceErrorOptions {
+	code: 'NPM_VERSION_PATCH_FAILED'
+}
 export interface NpmPublishFailedErrorOptions extends SpruceErrors.NodeAutoupgrader.NpmPublishFailed, ISpruceErrorOptions {
 	code: 'NPM_PUBLISH_FAILED'
 }
@@ -14,6 +17,6 @@ export interface GitPublishFailedErrorOptions extends SpruceErrors.NodeAutoupgra
 	code: 'GIT_PUBLISH_FAILED'
 }
 
-type ErrorOptions =  | TypeValidationFailedErrorOptions  | SpruceUpgradeFailedErrorOptions  | NpmPublishFailedErrorOptions  | GitPublishFailedErrorOptions 
+type ErrorOptions =  | TypeValidationFailedErrorOptions  | SpruceUpgradeFailedErrorOptions  | NpmVersionPatchFailedErrorOptions  | NpmPublishFailedErrorOptions  | GitPublishFailedErrorOptions 
 
 export default ErrorOptions
