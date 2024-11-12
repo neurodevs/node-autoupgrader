@@ -17,7 +17,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
 
         this.fakeChdir()
         this.fakeExecSync()
-        this.fakeGitStatusResponse = this.fakeGitStatus
+        this.fakeGitStatusResponse = '' as Buffer & string
 
         this.instance = this.SpruceAutoupgrader()
     }
@@ -28,12 +28,23 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async runThrowsWithMissingRequiredOptions() {
+    protected static async throwsWithMissingRequiredOptions() {
         // @ts-ignore
         const err = await assert.doesThrowAsync(() => this.instance.run())
 
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
             parameters: ['packagePaths'],
+        })
+    }
+
+    @test()
+    protected static async throwsForPackagesWithUncommittedChanges() {
+        this.fakeGitStatusResponse = 'M fake.ts' as Buffer & string
+
+        const err = await assert.doesThrowAsync(() => this.run(false))
+
+        errorAssert.assertError(err, 'UNCOMMITTED_CHANGES', {
+            packagePaths: this.packagePaths,
         })
     }
 
@@ -94,10 +105,11 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
 
     @test()
     protected static async skipsRestOfUpgradeIfNoGitChanges() {
+        this.skipAssertNoUncommittedChanges()
         this.skipToGitStatus()
         this.fakeGitStatusResponse = '' as Buffer & string
 
-        await this.run()
+        await this.run(false)
 
         assert.isEqualDeep(
             this.callsToExecSync.length,
@@ -227,8 +239,16 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         })
     }
 
-    private static async run() {
+    private static async run(shouldSet = true) {
+        if (shouldSet) {
+            this.skipNoUncommittedChangesAndSetFakeGitStatus()
+        }
         await this.instance.run(this.packagePaths)
+    }
+
+    private static skipNoUncommittedChangesAndSetFakeGitStatus() {
+        this.skipAssertNoUncommittedChanges()
+        this.setFakeGitStatus()
     }
 
     private static fakeChdir() {
@@ -309,6 +329,11 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         this.instance.tryToRunGitPublish = () => {}
     }
 
+    private static skipAssertNoUncommittedChanges() {
+        // @ts-ignore
+        this.instance.assertNoUncommittedChanges = () => {}
+    }
+
     private static createSpruceUpgradeCall() {
         return this.formatCommand('spruce upgrade')
     }
@@ -339,13 +364,17 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         } as CallToExecSync
     }
 
+    private static setFakeGitStatus() {
+        this.fakeGitStatusResponse = this.fakeGitStatus
+    }
+
     private static readonly packagePaths = [generateId(), generateId()]
 
     private static readonly fakeExecSyncError = 'Unexpected error in execSync'
 
     private static readonly fakeGitStatus = 'M fake.ts' as Buffer & string
 
-    private static fakeGitStatusResponse = this.fakeGitStatus
+    private static fakeGitStatusResponse = '' as Buffer & string
 
     private static callsToChdir: string[] = []
 

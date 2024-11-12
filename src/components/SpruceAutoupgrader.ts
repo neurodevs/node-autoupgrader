@@ -24,6 +24,32 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         assertOptions({ packagePaths }, ['packagePaths'])
         this.packagePaths = packagePaths
 
+        this.assertNoUncommittedChanges()
+        this.upgradePackages()
+    }
+
+    private assertNoUncommittedChanges() {
+        const uncommittedPaths = this.packagePaths.filter((path) => {
+            this.currentPackagePath = path
+            this.checkForGitChanges()
+            return this.hasGitChanges
+        })
+
+        if (uncommittedPaths.length) {
+            throw new SpruceError({
+                code: 'UNCOMMITTED_CHANGES',
+                packagePaths: uncommittedPaths,
+            })
+        }
+    }
+
+    protected checkForGitChanges() {
+        this.currentGitChanges = this.execSync('git status --porcelain', {
+            encoding: 'utf-8',
+        })
+    }
+
+    private upgradePackages() {
         for (const path of this.packagePaths) {
             this.currentPackagePath = path
             this.upgradePackage()
@@ -62,12 +88,6 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     private throwSpruceUpgradeFailed() {
         this.throwSpruceError('SPRUCE_UPGRADE_FAILED')
-    }
-
-    protected checkForGitChanges() {
-        this.currentGitChanges = this.execSync('git status --porcelain', {
-            encoding: 'utf-8',
-        })
     }
 
     protected tryToRunTypeValidation() {
@@ -140,7 +160,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('NPM_PUBLISH_FAILED')
     }
 
-    private throwSpruceError(code: SpruceError['options']['code']) {
+    private throwSpruceError(code: any) {
         throw new SpruceError({
             code,
             packagePath: this.currentPackagePath,

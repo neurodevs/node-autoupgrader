@@ -1,6 +1,9 @@
 import { SpruceErrors } from "#spruce/errors/errors.types"
 import { ErrorOptions as ISpruceErrorOptions} from "@sprucelabs/error"
 
+export interface UncommittedChangesErrorOptions extends SpruceErrors.NodeAutoupgrader.UncommittedChanges, ISpruceErrorOptions {
+	code: 'UNCOMMITTED_CHANGES'
+}
 export interface TypeValidationFailedErrorOptions extends SpruceErrors.NodeAutoupgrader.TypeValidationFailed, ISpruceErrorOptions {
 	code: 'TYPE_VALIDATION_FAILED'
 }
@@ -17,6 +20,6 @@ export interface GitPublishFailedErrorOptions extends SpruceErrors.NodeAutoupgra
 	code: 'GIT_PUBLISH_FAILED'
 }
 
-type ErrorOptions =  | TypeValidationFailedErrorOptions  | SpruceUpgradeFailedErrorOptions  | NpmVersionPatchFailedErrorOptions  | NpmPublishFailedErrorOptions  | GitPublishFailedErrorOptions 
+type ErrorOptions =  | UncommittedChangesErrorOptions  | TypeValidationFailedErrorOptions  | SpruceUpgradeFailedErrorOptions  | NpmVersionPatchFailedErrorOptions  | NpmPublishFailedErrorOptions  | GitPublishFailedErrorOptions 
 
 export default ErrorOptions

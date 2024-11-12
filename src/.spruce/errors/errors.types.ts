@@ -9,6 +9,36 @@ import * as SpruceSchema from '@sprucelabs/schema'
 
 
 
+
+export declare namespace SpruceErrors.NodeAutoupgrader {
+
+	
+	export interface UncommittedChanges {
+		
+			
+			'packagePaths': string[]
+	}
+
+	export interface UncommittedChangesSchema extends SpruceSchema.Schema {
+		id: 'uncommittedChanges',
+		namespace: 'NodeAutoupgrader',
+		name: 'UNCOMMITTED_CHANGES',
+		    fields: {
+		            /** . */
+		            'packagePaths': {
+		                type: 'text',
+		                isRequired: true,
+		                isArray: true,
+		                options: undefined
+		            },
+		    }
+	}
+
+	export type UncommittedChangesEntity = SchemaEntity<SpruceErrors.NodeAutoupgrader.UncommittedChangesSchema>
+
+}
+
+
 export declare namespace SpruceErrors.NodeAutoupgrader {
 
 	

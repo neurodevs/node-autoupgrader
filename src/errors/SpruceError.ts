@@ -27,6 +27,14 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
                 message = `Npm version patch failed for package: ${options?.packagePath}!`
                 break
 
+            case 'UNCOMMITTED_CHANGES':
+                message = `
+                    \n All changes must be committed before upgrading packages! 
+                    \n Please commit the following packages: 
+                    \n - ${options?.packagePaths.join('\n - ')}
+                `
+                break
+
             default:
                 message = super.friendlyMessage()
         }
