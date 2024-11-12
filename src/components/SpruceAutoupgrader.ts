@@ -32,9 +32,9 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     private upgradePackage() {
         this.changeDirectoryToCurrentPackage()
         this.tryToRunSpruceUpgrade()
-        this.tryToRunTsc()
+        this.tryToRunTypeValidation()
         this.tryToRunGitPublish()
-        this.runNpmPublish()
+        this.tryToRunNpmPublish()
     }
 
     private changeDirectoryToCurrentPackage() {
@@ -58,21 +58,21 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('SPRUCE_UPGRADE_FAILED')
     }
 
-    private tryToRunTsc() {
+    private tryToRunTypeValidation() {
         try {
-            this.runTsc()
+            this.runTypeValidation()
         } catch (err: any) {
             this.currentError = err.message
-            this.throwTscFailed()
+            this.throwTypeValidationFailed()
         }
     }
 
-    private runTsc() {
+    private runTypeValidation() {
         this.execCommand('tsc --noEmit')
     }
 
-    private throwTscFailed() {
-        this.throwSpruceError('TSC_FAILED')
+    private throwTypeValidationFailed() {
+        this.throwSpruceError('TYPE_VALIDATION_FAILED')
     }
 
     private tryToRunGitPublish() {
@@ -94,8 +94,21 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('GIT_PUBLISH_FAILED')
     }
 
+    private tryToRunNpmPublish() {
+        try {
+            this.runNpmPublish()
+        } catch (err: any) {
+            this.currentError = err.message
+            this.throwNpmPublishFailed()
+        }
+    }
+
     private runNpmPublish() {
         this.execCommand('npm publish')
+    }
+
+    private throwNpmPublishFailed() {
+        this.throwSpruceError('NPM_PUBLISH_FAILED')
     }
 
     private throwSpruceError(code: SpruceError['options']['code']) {

@@ -94,13 +94,13 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async throwsIfTscFails() {
+    protected static async throwsIfTypeValidationFails() {
         this.setThrowOnExecSync()
-        this.skipTryToRunSpruceUpgrade()
+        this.skipToTypeValidation()
 
         const err = await assert.doesThrowAsync(() => this.run())
 
-        errorAssert.assertError(err, 'TSC_FAILED', {
+        errorAssert.assertError(err, 'TYPE_VALIDATION_FAILED', {
             packagePath: this.packagePaths[0],
             originalError: this.fakeExecSyncError,
         })
@@ -130,8 +130,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     @test()
     protected static async throwsIfGitPublishFails() {
         this.setThrowOnExecSync()
-        this.skipTryToRunSpruceUpgrade()
-        this.skipTryToRunTsc()
+        this.skipToGitPublish()
 
         const err = await assert.doesThrowAsync(() => this.run())
 
@@ -155,6 +154,19 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
             expected,
             'Should call execSync() for each package with the following options!\n'
         )
+    }
+
+    @test()
+    protected static async throwsIfNpmPublishFails() {
+        this.setThrowOnExecSync()
+        this.skipToNpmPublish()
+
+        const err = await assert.doesThrowAsync(() => this.run())
+
+        errorAssert.assertError(err, 'NPM_PUBLISH_FAILED', {
+            packagePath: this.packagePaths[0],
+            originalError: this.fakeExecSyncError,
+        })
     }
 
     private static async run() {
@@ -187,14 +199,33 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         }
     }
 
+    private static skipToTypeValidation() {
+        this.skipTryToRunSpruceUpgrade()
+    }
+
+    private static skipToGitPublish() {
+        this.skipToTypeValidation()
+        this.skipTryToRunTypeValidation()
+    }
+
+    private static skipToNpmPublish() {
+        this.skipToGitPublish()
+        this.skipTryToRunGitPublish()
+    }
+
     private static skipTryToRunSpruceUpgrade() {
         // @ts-ignore
         this.instance.tryToRunSpruceUpgrade = () => {}
     }
 
-    private static skipTryToRunTsc() {
+    private static skipTryToRunTypeValidation() {
         // @ts-ignore
-        this.instance.tryToRunTsc = () => {}
+        this.instance.tryToRunTypeValidation = () => {}
+    }
+
+    private static skipTryToRunGitPublish() {
+        // @ts-ignore
+        this.instance.tryToRunGitPublish = () => {}
     }
 
     private static createSpruceUpgradeCall() {

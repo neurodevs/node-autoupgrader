@@ -3,10 +3,10 @@ import { SpruceErrors } from '../errors.types'
 
 
 
-const tscFailedSchema: SpruceErrors.NodeAutoupgrader.TscFailedSchema  = {
-	id: 'tscFailed',
+const npmPublishFailedSchema: SpruceErrors.NodeAutoupgrader.NpmPublishFailedSchema  = {
+	id: 'npmPublishFailed',
 	namespace: 'NodeAutoupgrader',
-	name: 'TSC_FAILED',
+	name: 'NPM_PUBLISH_FAILED',
 	    fields: {
 	            /** . */
 	            'packagePath': {
@@ -17,6 +17,6 @@ const tscFailedSchema: SpruceErrors.NodeAutoupgrader.TscFailedSchema  = {
 	    }
 }
 
-SchemaRegistry.getInstance().trackSchema(tscFailedSchema)
+SchemaRegistry.getInstance().trackSchema(npmPublishFailedSchema)
 
-export default tscFailedSchema
+export default npmPublishFailedSchema

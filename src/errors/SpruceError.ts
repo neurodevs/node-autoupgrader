@@ -8,18 +8,19 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
         let message
         switch (options?.code) {
             case 'SPRUCE_UPGRADE_FAILED':
-                message = `Command "spruce upgrade" failed for package: ${options?.packagePath}!`
+                message = `Spruce upgrade failed for package: ${options?.packagePath}!`
                 break
 
-            case 'TSC_FAILED':
-                message = `Command "tsc --noEmit" failed for package: ${options?.packagePath}!`
+            case 'TYPE_VALIDATION_FAILED':
+                message = `Type validation failed for package: ${options?.packagePath}!`
                 break
 
             case 'GIT_PUBLISH_FAILED':
-                message = `
-                    \n Git publish failed for package: ${options?.packagePath}!
-                    \n Original error: ${options?.originalError}
-                `
+                message = `Git publish failed for package: ${options?.packagePath}!`
+                break
+
+            case 'NPM_PUBLISH_FAILED':
+                message = `Npm publis!`
                 break
 
             default:

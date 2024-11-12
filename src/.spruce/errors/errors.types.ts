@@ -7,19 +7,20 @@ import * as SpruceSchema from '@sprucelabs/schema'
 
 
 
+
 export declare namespace SpruceErrors.NodeAutoupgrader {
 
 	
-	export interface TscFailed {
+	export interface TypeValidationFailed {
 		
 			
 			'packagePath': string
 	}
 
-	export interface TscFailedSchema extends SpruceSchema.Schema {
-		id: 'tscFailed',
+	export interface TypeValidationFailedSchema extends SpruceSchema.Schema {
+		id: 'typeValidationFailed',
 		namespace: 'NodeAutoupgrader',
-		name: 'TSC_FAILED',
+		name: 'TYPE_VALIDATION_FAILED',
 		    fields: {
 		            /** . */
 		            'packagePath': {
@@ -30,7 +31,7 @@ export declare namespace SpruceErrors.NodeAutoupgrader {
 		    }
 	}
 
-	export type TscFailedEntity = SchemaEntity<SpruceErrors.NodeAutoupgrader.TscFailedSchema>
+	export type TypeValidationFailedEntity = SchemaEntity<SpruceErrors.NodeAutoupgrader.TypeValidationFailedSchema>
 
 }
 
@@ -59,6 +60,34 @@ export declare namespace SpruceErrors.NodeAutoupgrader {
 	}
 
 	export type SpruceUpgradeFailedEntity = SchemaEntity<SpruceErrors.NodeAutoupgrader.SpruceUpgradeFailedSchema>
+
+}
+
+
+export declare namespace SpruceErrors.NodeAutoupgrader {
+
+	
+	export interface NpmPublishFailed {
+		
+			
+			'packagePath': string
+	}
+
+	export interface NpmPublishFailedSchema extends SpruceSchema.Schema {
+		id: 'npmPublishFailed',
+		namespace: 'NodeAutoupgrader',
+		name: 'NPM_PUBLISH_FAILED',
+		    fields: {
+		            /** . */
+		            'packagePath': {
+		                type: 'text',
+		                isRequired: true,
+		                options: undefined
+		            },
+		    }
+	}
+
+	export type NpmPublishFailedEntity = SchemaEntity<SpruceErrors.NodeAutoupgrader.NpmPublishFailedSchema>
 
 }
 

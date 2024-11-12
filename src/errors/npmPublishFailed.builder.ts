@@ -1,8 +1,8 @@
 import { buildErrorSchema } from '@sprucelabs/schema'
 
 export default buildErrorSchema({
-    id: 'tscFailed',
-    name: 'TSC_FAILED',
+    id: 'npmPublishFailed',
+    name: 'NPM_PUBLISH_FAILED',
     fields: {
         packagePath: {
             type: 'text',
