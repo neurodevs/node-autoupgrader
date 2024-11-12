@@ -66,7 +66,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     private upgradePackage() {
         this.changeDirectoryToCurrentPackage()
-        this.tryToRunSpruceUpgrade()
+        this.trySpruceUpgrade()
         this.checkForGitChanges()
 
         if (this.hasGitChanges) {
@@ -81,7 +81,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.chdir(this.currentPackagePath)
     }
 
-    protected tryToRunSpruceUpgrade() {
+    protected trySpruceUpgrade() {
         try {
             this.runSpruceUpgrade()
         } catch (err: any) {
