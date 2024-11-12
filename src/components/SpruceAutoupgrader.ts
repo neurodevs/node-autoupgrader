@@ -11,6 +11,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     private packagePaths!: string[]
     private currentPackagePath!: string
+    protected currentGitChanges = ''
     private currentError!: Error
 
     protected constructor() {}
@@ -33,10 +34,13 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.changeDirectoryToCurrentPackage()
         this.tryToRunSpruceUpgrade()
         this.checkForGitChanges()
-        this.tryToRunTypeValidation()
-        this.tryToRunNpmVersionPatch()
-        this.tryToRunGitPublish()
-        this.tryToRunNpmPublish()
+
+        if (this.hasGitChanges) {
+            this.tryToRunTypeValidation()
+            this.tryToRunNpmVersionPatch()
+            this.tryToRunGitPublish()
+            this.tryToRunNpmPublish()
+        }
     }
 
     private changeDirectoryToCurrentPackage() {
@@ -60,11 +64,13 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('SPRUCE_UPGRADE_FAILED')
     }
 
-    private checkForGitChanges() {
-        this.execSync('git status --porcelain', { encoding: 'utf-8' })
+    protected checkForGitChanges() {
+        this.currentGitChanges = this.execSync('git status --porcelain', {
+            encoding: 'utf-8',
+        })
     }
 
-    private tryToRunTypeValidation() {
+    protected tryToRunTypeValidation() {
         try {
             this.runTypeValidation()
         } catch (err: any) {
@@ -81,7 +87,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('TYPE_VALIDATION_FAILED')
     }
 
-    private tryToRunNpmVersionPatch() {
+    protected tryToRunNpmVersionPatch() {
         try {
             this.runNpmVersionPatch()
         } catch (err: any) {
@@ -98,7 +104,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('NPM_VERSION_PATCH_FAILED')
     }
 
-    private tryToRunGitPublish() {
+    protected tryToRunGitPublish() {
         try {
             this.runGitPublish()
         } catch (err: any) {
@@ -144,6 +150,10 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     private execCommand(command: string) {
         this.execSync(command, { stdio: 'inherit' })
+    }
+
+    private get hasGitChanges() {
+        return this.currentGitChanges.trim().length > 0
     }
 
     private get chdir() {

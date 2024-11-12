@@ -17,6 +17,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
 
         this.fakeChdir()
         this.fakeExecSync()
+        this.fakeGitStatusResponse = this.fakeGitStatus
 
         this.instance = this.SpruceAutoupgrader()
     }
@@ -76,7 +77,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async callsGitStatusForEachPackage() {
+    protected static async checksForGitChangesForEachPackage() {
         await this.run()
 
         const expected = [
@@ -88,6 +89,20 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
             [this.callsToExecSync[1], this.callsToExecSync[9]],
             expected,
             'Should call execSync() for each package with the following options!\n'
+        )
+    }
+
+    @test()
+    protected static async skipsRestOfUpgradeIfNoGitChanges() {
+        this.skipToGitStatus()
+        this.fakeGitStatusResponse = '' as Buffer & string
+
+        await this.run()
+
+        assert.isEqualDeep(
+            this.callsToExecSync.length,
+            2,
+            'Should only call execSync() for git status!\n'
         )
     }
 
@@ -233,6 +248,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
             options?: ExecSyncOptions
         ) => {
             this.callsToExecSync.push({ command, options })
+            return this.fakeGitStatusResponse
         }
     }
 
@@ -249,6 +265,8 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     private static skipToTypeValidation() {
         this.skipToGitStatus()
         this.skipCheckForGitChanges()
+        // @ts-ignore
+        this.instance.currentGitChanges = 'M fake.ts'
     }
 
     private static skipToNpmVersionPatch() {
@@ -321,9 +339,13 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         } as CallToExecSync
     }
 
+    private static readonly packagePaths = [generateId(), generateId()]
+
     private static readonly fakeExecSyncError = 'Unexpected error in execSync'
 
-    private static readonly packagePaths = [generateId(), generateId()]
+    private static readonly fakeGitStatus = 'M fake.ts' as Buffer & string
+
+    private static fakeGitStatusResponse = this.fakeGitStatus
 
     private static callsToChdir: string[] = []
 
