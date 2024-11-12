@@ -42,10 +42,23 @@ export default class NeurodevsAutoupgraderTest extends AbstractSpruceTest {
         return `${homedir()}/dev/${packageName}`
     }
 
-    private static readonly packagePaths = [
-        this.createPath('node-lsl'),
-        this.createPath('node-xdf'),
+    private static packageNames = [
+        'node-biometrics',
+        'node-csv',
+        'node-csv-extractor',
+        'node-file-checker',
+        'node-file-loader',
+        'node-csv-loader',
+        'node-lsl',
+        'node-mangled-names',
+        'node-neuropype',
+        'node-server-plots',
+        'node-signal-processing',
+        'node-task-queue',
+        'node-xdf',
     ]
+
+    private static packagePaths = this.packageNames.map(this.createPath)
 
     private static NeurodevsAutoupgrader() {
         return NeurodevsAutoupgrader.Create()

@@ -20,10 +20,23 @@ export default class NeurodevsAutoupgrader implements Autoupgrader {
         await this.spruce.run(this.packagePaths)
     }
 
-    private packagePaths = [
-        this.createPath('node-lsl'),
-        this.createPath('node-xdf'),
+    private packageNames = [
+        'node-biometrics',
+        'node-csv',
+        'node-csv-extractor',
+        'node-file-checker',
+        'node-file-loader',
+        'node-csv-loader',
+        'node-lsl',
+        'node-mangled-names',
+        'node-neuropype',
+        'node-server-plots',
+        'node-signal-processing',
+        'node-task-queue',
+        'node-xdf',
     ]
+
+    private packagePaths = this.packageNames.map(this.createPath)
 
     private createPath(packageName: string) {
         return `${homedir()}/dev/${packageName}`
