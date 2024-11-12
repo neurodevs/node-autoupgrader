@@ -31,9 +31,10 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     private upgradePackage() {
         this.changeDirectoryToCurrentPackage()
-        this.tryToRunNpmVersionPatch()
         this.tryToRunSpruceUpgrade()
+        this.checkForGitChanges()
         this.tryToRunTypeValidation()
+        this.tryToRunNpmVersionPatch()
         this.tryToRunGitPublish()
         this.tryToRunNpmPublish()
     }
@@ -57,6 +58,10 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     private throwSpruceUpgradeFailed() {
         this.throwSpruceError('SPRUCE_UPGRADE_FAILED')
+    }
+
+    private checkForGitChanges() {
+        this.execSync('git status --porcelain', { encoding: 'utf-8' })
     }
 
     private tryToRunTypeValidation() {

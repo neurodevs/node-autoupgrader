@@ -48,34 +48,6 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async callsNpmVersionPatchForEachPackage() {
-        await this.run()
-
-        const expected = [
-            this.createNpmVersionPatchCall(),
-            this.createNpmVersionPatchCall(),
-        ] as CallToExecSync[]
-
-        assert.isEqualDeep(
-            [this.callsToExecSync[0], this.callsToExecSync[7]],
-            expected,
-            'Should call execSync() for each package with the following options!\n'
-        )
-    }
-
-    @test()
-    protected static async throwsIfNpmVersionPatchFails() {
-        this.setThrowOnExecSync()
-
-        const err = await assert.doesThrowAsync(() => this.run())
-
-        errorAssert.assertError(err, 'NPM_VERSION_PATCH_FAILED', {
-            packagePath: this.packagePaths[0],
-            originalError: this.fakeExecSyncError,
-        })
-    }
-
-    @test()
     protected static async callsSpruceUpgradeForEachPackage() {
         await this.run()
 
@@ -85,7 +57,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         ] as CallToExecSync[]
 
         assert.isEqualDeep(
-            [this.callsToExecSync[1], this.callsToExecSync[8]],
+            [this.callsToExecSync[0], this.callsToExecSync[8]],
             expected,
             'Should call execSync() for each package with the following options!\n'
         )
@@ -94,7 +66,6 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     @test()
     protected static async throwsIfSpruceUpgradeFails() {
         this.setThrowOnExecSync()
-        this.skipToSpruceUpgrade()
 
         const err = await assert.doesThrowAsync(() => this.run())
 
@@ -102,6 +73,22 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
             packagePath: this.packagePaths[0],
             originalError: this.fakeExecSyncError,
         })
+    }
+
+    @test()
+    protected static async callsGitStatusForEachPackage() {
+        await this.run()
+
+        const expected = [
+            this.createGitStatusCall(),
+            this.createGitStatusCall(),
+        ] as CallToExecSync[]
+
+        assert.isEqualDeep(
+            [this.callsToExecSync[1], this.callsToExecSync[9]],
+            expected,
+            'Should call execSync() for each package with the following options!\n'
+        )
     }
 
     @test()
@@ -114,7 +101,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         ] as CallToExecSync[]
 
         assert.isEqualDeep(
-            [this.callsToExecSync[2], this.callsToExecSync[9]],
+            [this.callsToExecSync[2], this.callsToExecSync[10]],
             expected,
             'Should call execSync() for each package with the following options!\n'
         )
@@ -134,6 +121,35 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     }
 
     @test()
+    protected static async callsNpmVersionPatchForEachPackage() {
+        await this.run()
+
+        const expected = [
+            this.createNpmVersionPatchCall(),
+            this.createNpmVersionPatchCall(),
+        ] as CallToExecSync[]
+
+        assert.isEqualDeep(
+            [this.callsToExecSync[3], this.callsToExecSync[11]],
+            expected,
+            'Should call execSync() for each package with the following options!\n'
+        )
+    }
+
+    @test()
+    protected static async throwsIfNpmVersionPatchFails() {
+        this.setThrowOnExecSync()
+        this.skipToNpmVersionPatch()
+
+        const err = await assert.doesThrowAsync(() => this.run())
+
+        errorAssert.assertError(err, 'NPM_VERSION_PATCH_FAILED', {
+            packagePath: this.packagePaths[0],
+            originalError: this.fakeExecSyncError,
+        })
+    }
+
+    @test()
     protected static async callsGitPublishForEachPackage() {
         await this.run()
 
@@ -145,9 +161,9 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
 
         assert.isEqualDeep(
             [
-                this.callsToExecSync[3],
                 this.callsToExecSync[4],
                 this.callsToExecSync[5],
+                this.callsToExecSync[6],
             ],
             expected,
             'Should call execSync() for each package with the following options!\n'
@@ -177,7 +193,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         ] as CallToExecSync[]
 
         assert.isEqualDeep(
-            [this.callsToExecSync[6], this.callsToExecSync[13]],
+            [this.callsToExecSync[7], this.callsToExecSync[15]],
             expected,
             'Should call execSync() for each package with the following options!\n'
         )
@@ -226,18 +242,23 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         }
     }
 
-    private static skipToSpruceUpgrade() {
-        this.skipTryToRunNpmVersionPatch()
-    }
-
-    private static skipToTypeValidation() {
-        this.skipToSpruceUpgrade()
+    private static skipToGitStatus() {
         this.skipTryToRunSpruceUpgrade()
     }
 
-    private static skipToGitPublish() {
+    private static skipToTypeValidation() {
+        this.skipToGitStatus()
+        this.skipCheckForGitChanges()
+    }
+
+    private static skipToNpmVersionPatch() {
         this.skipToTypeValidation()
         this.skipTryToRunTypeValidation()
+    }
+
+    private static skipToGitPublish() {
+        this.skipToNpmVersionPatch()
+        this.skipTryToRunNpmVersionPatch()
     }
 
     private static skipToNpmPublish() {
@@ -245,14 +266,14 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         this.skipTryToRunGitPublish()
     }
 
-    private static skipTryToRunNpmVersionPatch() {
-        // @ts-ignore
-        this.instance.runNpmVersionPatch = () => {}
-    }
-
     private static skipTryToRunSpruceUpgrade() {
         // @ts-ignore
         this.instance.tryToRunSpruceUpgrade = () => {}
+    }
+
+    private static skipCheckForGitChanges() {
+        // @ts-ignore
+        this.instance.checkForGitChanges = () => {}
     }
 
     private static skipTryToRunTypeValidation() {
@@ -260,21 +281,33 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         this.instance.tryToRunTypeValidation = () => {}
     }
 
+    private static skipTryToRunNpmVersionPatch() {
+        // @ts-ignore
+        this.instance.runNpmVersionPatch = () => {}
+    }
+
     private static skipTryToRunGitPublish() {
         // @ts-ignore
         this.instance.tryToRunGitPublish = () => {}
-    }
-
-    private static createNpmVersionPatchCall() {
-        return this.formatCommand('npm version patch --no-git-tag-version')
     }
 
     private static createSpruceUpgradeCall() {
         return this.formatCommand('spruce upgrade')
     }
 
+    private static createGitStatusCall() {
+        return {
+            command: 'git status --porcelain',
+            options: { encoding: 'utf-8' },
+        } as CallToExecSync
+    }
+
     private static createTscCall() {
         return this.formatCommand('tsc --noEmit')
+    }
+
+    private static createNpmVersionPatchCall() {
+        return this.formatCommand('npm version patch --no-git-tag-version')
     }
 
     private static createNpmPublishCall() {
