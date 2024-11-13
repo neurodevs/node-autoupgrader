@@ -45,10 +45,8 @@ export default class NeurodevsAutoupgraderTest extends AbstractSpruceTest {
     private static packageNames = [
         'node-biometrics',
         'node-csv',
-        'node-csv-extractor',
         'node-file-checker',
         'node-file-loader',
-        'node-csv-loader',
         'node-lsl',
         'node-mangled-names',
         'node-neuropype',
