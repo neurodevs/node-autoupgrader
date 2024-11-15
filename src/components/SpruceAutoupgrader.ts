@@ -17,8 +17,11 @@ export default class SpruceAutoupgrader implements Autoupgrader {
     private currentPackagePath!: string
     private currentError!: Error
     private log = buildLog('SpruceAutoupgrader')
+    private originalConsoleLog = console.log
 
-    protected constructor() {}
+    protected constructor() {
+        this.setLogFilter()
+    }
 
     public static Create() {
         return new (this.Class ?? this)()
@@ -29,7 +32,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.packagePaths = packagePaths
 
         this.assertNoUncommittedChanges()
-        this.upgradePackages()
+        await this.upgradePackages()
     }
 
     protected assertNoUncommittedChanges() {
@@ -61,25 +64,30 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         })
     }
 
-    private upgradePackages() {
-        for (const path of this.packagePaths) {
-            this.currentPackagePath = path
-            this.upgradePackage()
-        }
+    private async upgradePackages() {
+        await Promise.all(
+            this.packagePaths.map(async (path) => {
+                this.currentPackagePath = path
+                await this.upgradePackage()
+            })
+        )
     }
 
-    private upgradePackage() {
-        this.log.info('Upgrading package:', this.currentPackagePath)
+    private async upgradePackage() {
+        this.logUpgradingPackage()
 
         this.changeDirectoryToCurrentPackage()
         this.trySpruceUpgrade()
         this.checkForGitChanges()
 
         if (this.hasGitChanges) {
+            this.logChangesDetected()
             this.tryTypeValidation()
             this.tryNpmVersionPatch()
             this.tryGitPublish()
             this.tryNpmPublish()
+        } else {
+            this.logNoChangesDetected()
         }
     }
 
@@ -196,5 +204,32 @@ export default class SpruceAutoupgrader implements Autoupgrader {
 
     private get execSync() {
         return SpruceAutoupgrader.execSync
+    }
+
+    private logUpgradingPackage() {
+        this.log.info('Upgrading package:', this.currentPackagePath)
+    }
+
+    private logChangesDetected() {
+        this.log.info(
+            'Changes detected, upgrading package:',
+            this.currentPackagePath
+        )
+    }
+
+    private logNoChangesDetected() {
+        this.log.info(
+            'No changes detected, skipping upgrade:',
+            this.currentPackagePath
+        )
+    }
+
+    private setLogFilter() {
+        console.log = (...args) => {
+            const message = args.join(' ')
+            if (message.includes('SpruceAutoupgrader')) {
+                this.originalConsoleLog(...args)
+            }
+        }
     }
 }
