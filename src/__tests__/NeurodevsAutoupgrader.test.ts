@@ -1,9 +1,9 @@
 import { homedir } from 'os'
 import AbstractSpruceTest, { test, assert } from '@sprucelabs/test-utils'
-import NeurodevsAutoupgrader from '../../components/NeurodevsAutoupgrader'
-import SpruceAutoupgrader from '../../components/SpruceAutoupgrader'
-import FakeAutoupgrader from '../../testDoubles/FakeAutoupgrader'
-import { Autoupgrader } from '../../types'
+import NeurodevsAutoupgrader from '../components/NeurodevsAutoupgrader'
+import SpruceAutoupgrader from '../components/SpruceAutoupgrader'
+import FakeAutoupgrader from '../testDoubles/FakeAutoupgrader'
+import { Autoupgrader } from '../types'
 
 export default class NeurodevsAutoupgraderTest extends AbstractSpruceTest {
     private static instance: Autoupgrader

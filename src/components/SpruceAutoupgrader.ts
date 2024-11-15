@@ -77,15 +77,15 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.logUpgradingPackage()
 
         this.changeDirectoryToCurrentPackage()
-        this.trySpruceUpgrade()
+        this.upgradePackageDependencies()
         this.checkForGitChanges()
 
         if (this.hasGitChanges) {
             this.logChangesDetected()
-            this.tryTypeValidation()
-            this.tryNpmVersionPatch()
-            this.tryGitPublish()
-            this.tryNpmPublish()
+            this.assertTypesPassing()
+            this.incrementPackageVersion()
+            this.commitAllChanges()
+            this.publishPackage()
         } else {
             this.logNoChangesDetected()
         }
@@ -95,7 +95,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.chdir(this.currentPackagePath)
     }
 
-    protected trySpruceUpgrade() {
+    protected upgradePackageDependencies() {
         try {
             this.runSpruceUpgrade()
         } catch (err: any) {
@@ -112,7 +112,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('SPRUCE_UPGRADE_FAILED')
     }
 
-    protected tryTypeValidation() {
+    protected assertTypesPassing() {
         try {
             this.runTypeValidation()
         } catch (err: any) {
@@ -129,7 +129,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('TYPE_VALIDATION_FAILED')
     }
 
-    protected tryNpmVersionPatch() {
+    protected incrementPackageVersion() {
         try {
             this.runNpmVersionPatch()
         } catch (err: any) {
@@ -146,7 +146,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('NPM_VERSION_PATCH_FAILED')
     }
 
-    protected tryGitPublish() {
+    protected commitAllChanges() {
         try {
             this.runGitPublish()
         } catch (err: any) {
@@ -165,7 +165,7 @@ export default class SpruceAutoupgrader implements Autoupgrader {
         this.throwSpruceError('GIT_PUBLISH_FAILED')
     }
 
-    private tryNpmPublish() {
+    protected publishPackage() {
         try {
             this.runNpmPublish()
         } catch (err: any) {

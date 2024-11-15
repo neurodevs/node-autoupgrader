@@ -108,7 +108,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     protected static async skipsRestOfUpgradeIfNoGitChanges() {
         this.fakeGitStatusResponse = '' as Buffer & string
         this.skipAssertNoUncommittedChanges()
-        this.skipToGitStatus()
+        this.skipToCheckForGitChanges()
 
         await this.run(false)
 
@@ -138,7 +138,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     @test()
     protected static async throwsIfTypeValidationFails() {
         this.setThrowOnExecSync()
-        this.skipToTypeValidation()
+        this.skipToAssertTypesPassing()
 
         const err = await assert.doesThrowAsync(() => this.run())
 
@@ -167,7 +167,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     @test()
     protected static async throwsIfNpmVersionPatchFails() {
         this.setThrowOnExecSync()
-        this.skipToNpmVersionPatch()
+        this.skipToIncrementPackageVersion()
 
         const err = await assert.doesThrowAsync(() => this.run())
 
@@ -201,7 +201,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     @test()
     protected static async throwsIfGitPublishFails() {
         this.setThrowOnExecSync()
-        this.skipToGitPublish()
+        this.skipToCommitAllChanges()
 
         const err = await assert.doesThrowAsync(() => this.run())
 
@@ -230,7 +230,7 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
     @test()
     protected static async throwsIfNpmPublishFails() {
         this.setThrowOnExecSync()
-        this.skipToNpmPublish()
+        this.skipToPublishPackage()
 
         const err = await assert.doesThrowAsync(() => this.run())
 
@@ -279,30 +279,35 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         }
     }
 
-    private static skipToGitStatus() {
-        this.skipTrySpruceUpgrade()
+    private static skipToCheckForGitChanges() {
+        this.skipUpgradePackageDependencies()
     }
 
-    private static skipToTypeValidation() {
-        this.skipToGitStatus()
+    private static skipToAssertTypesPassing() {
+        this.skipToCheckForGitChanges()
         this.skipCheckForGitChanges()
         // @ts-ignore
         this.instance.currentGitChanges = 'M fake.ts'
     }
 
-    private static skipToNpmVersionPatch() {
-        this.skipToTypeValidation()
-        this.skipTryTypeValidation()
+    private static skipToIncrementPackageVersion() {
+        this.skipToAssertTypesPassing()
+        this.skipAssertTypesPassing()
     }
 
-    private static skipToGitPublish() {
-        this.skipToNpmVersionPatch()
-        this.skipTryNpmVersionPatch()
+    private static skipToCommitAllChanges() {
+        this.skipToIncrementPackageVersion()
+        this.skipIncrementPackageVersion()
     }
 
-    private static skipToNpmPublish() {
-        this.skipToGitPublish()
-        this.skipTryGitPublish()
+    private static skipToPublishPackage() {
+        this.skipToCommitAllChanges()
+        this.skipCommitAllChanges()
+    }
+
+    private static skipAssertNoUncommittedChanges() {
+        // @ts-ignore
+        this.instance.assertNoUncommittedChanges = () => {}
     }
 
     private static skipCheckForGitChanges() {
@@ -310,29 +315,24 @@ export default class SpruceAutoupgraderTest extends AbstractSpruceTest {
         this.instance.checkForGitChanges = () => {}
     }
 
-    private static skipTrySpruceUpgrade() {
+    private static skipUpgradePackageDependencies() {
         // @ts-ignore
-        this.instance.trySpruceUpgrade = () => {}
+        this.instance.upgradePackageDependencies = () => {}
     }
 
-    private static skipTryTypeValidation() {
+    private static skipAssertTypesPassing() {
         // @ts-ignore
-        this.instance.tryTypeValidation = () => {}
+        this.instance.assertTypesPassing = () => {}
     }
 
-    private static skipTryNpmVersionPatch() {
+    private static skipIncrementPackageVersion() {
         // @ts-ignore
-        this.instance.tryNpmVersionPatch = () => {}
+        this.instance.incrementPackageVersion = () => {}
     }
 
-    private static skipTryGitPublish() {
+    private static skipCommitAllChanges() {
         // @ts-ignore
-        this.instance.tryGitPublish = () => {}
-    }
-
-    private static skipAssertNoUncommittedChanges() {
-        // @ts-ignore
-        this.instance.assertNoUncommittedChanges = () => {}
+        this.instance.commitAllChanges = () => {}
     }
 
     private static createSpruceUpgradeCall() {
