@@ -21,6 +21,7 @@ export default class NeurodevsAutoupgrader implements Autoupgrader {
     }
 
     private packageNames = [
+        'node-autoupgrader',
         'node-biometrics',
         'node-csv',
         'node-file-checker',

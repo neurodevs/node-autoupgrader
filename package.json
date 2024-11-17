@@ -1,6 +1,6 @@
 {
   "name": "@neurodevs/node-autoupgrader",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "build/index.js",
   "repository": "https://github.com/neurodevs/node-autoupgrader.git",
   "scripts": {
